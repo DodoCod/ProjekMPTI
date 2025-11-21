@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\Participant;
-use App\Models\Question;
-use App\Models\Response;
+use Carbon\Carbon;
 use App\Models\Result;
 use App\Models\Category;
-use Carbon\Carbon;
-use Illuminate\Support\Facades\Session; // Import Session Facade
+use App\Models\Question;
+use App\Models\Response;
+use App\Models\Participant;
+use App\Mail\TestResultMail;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session; // Import Session Facade
 
 class DassTestController extends Controller
 {
@@ -86,99 +88,108 @@ class DassTestController extends Controller
     
     // FUNGSI 4: MENYIMPAN JAWABAN LANGKAH SAAT INI (submitStep)
     public function submitStep(Request $request)
-    {
-        $request->validate([
-            'question_id' => 'required|exists:questions,id',
-            'step' => 'required|integer|min:1',
-            'score' => 'required|integer|min:0|max:3',
-        ]);
-        
-        $nextStep = (int) $request->step + 1;
-        $questionId = $request->question_id;
-        $score = $request->score;
-        
-        $responses = Session::get('dass_responses', []);
-        $responses[$questionId] = $score;
-        Session::put('dass_responses', $responses);
+{
+    $request->validate([
+        'question_id' => 'required|exists:questions,id',
+        'step' => 'required|integer|min:1',
+        'score' => 'required|integer|min:0|max:3',
+    ]);
+    
+    $nextStep = (int) $request->step + 1;
+    $questionId = $request->question_id;
+    $score = $request->score;
+    
+    $responses = Session::get('dass_responses', []);
+    $responses[$questionId] = $score;
+    Session::put('dass_responses', $responses);
 
-        $totalQuestions = Question::count();
+    $totalQuestions = Question::count();
 
-        if ($request->step >= $totalQuestions) {
-            // Jika ini adalah langkah terakhir, redirect ke fungsi finalisasi
-            return redirect()->route('dass.test.finish');
-        }
-
-        // Lanjut ke pertanyaan berikutnya
-        return redirect()->route('dass.test.start', ['step' => $nextStep]);
+    // ✅ TAMBAHKAN INI: Cek jika waktu habis
+    if ($request->time_expired == '1') {
+        // Simpan semua jawaban yang sudah ada
+        // Lalu langsung finalisasi dan redirect ke hasil
+        return $this->finishTest($request);
     }
+
+    if ($request->step >= $totalQuestions) {
+        // Jika ini adalah langkah terakhir, redirect ke fungsi finalisasi
+        return redirect()->route('dass.test.finish');
+    }
+
+    // Lanjut ke pertanyaan berikutnya
+    return redirect()->route('dass.test.start', ['step' => $nextStep]);
+}
 
     // FUNGSI 5: FINALISASI TES & KALKULASI HASIL (finishTest)
     public function finishTest(Request $request)
-    {
-        $participantId = Session::get('current_participant_id');
-        $responses = Session::get('dass_responses', []);
-        $totalQuestions = Question::count();
+{
+    $participantId = Session::get('current_participant_id');
+    $responses = Session::get('dass_responses', []);
+    $totalQuestions = Question::count();
+    $timeExpired = $request->input('time_expired', '0') == '1';
 
-        if (count($responses) < $totalQuestions) {
-            return redirect()->route('dass.test.start', ['step' => count($responses) + 1])
-                             ->with('error', 'Mohon lengkapi semua 42 pertanyaan sebelum menyelesaikan tes.');
-        }
+    // ✅ UBAH INI: Jika waktu habis, skip validasi jumlah jawaban
+    if (!$timeExpired && count($responses) < $totalQuestions) {
+        return redirect()->route('dass.test.start', ['step' => count($responses) + 1])
+                         ->with('error', 'Mohon lengkapi semua 42 pertanyaan sebelum menyelesaikan tes.');
+    }
 
-        if (!$participantId) {
-            return redirect()->route('landing')->with('error', 'Sesi tes tidak valid.');
-        }
+    if (!$participantId) {
+        return redirect()->route('landing')->with('error', 'Sesi tes tidak valid.');
+    }
 
-        $questions = Question::all()->keyBy('id');
-        $categories = Category::pluck('code', 'id');
-        $rawScores = $categories->flip()->map(fn() => 0)->toArray(); 
+    $questions = Question::all()->keyBy('id');
+    $categories = Category::pluck('code', 'id');
+    $rawScores = $categories->flip()->map(fn() => 0)->toArray(); 
 
-        DB::beginTransaction();
-        try {
-            foreach ($responses as $qId => $score) {
-                // Simpan ke tabel Responses
-                Response::create([
-                    'participant_id' => $participantId,
-                    'question_id' => $qId,
-                    'score' => $score,
-                ]);
-
-                // Akumulasi Skor
-                $categoryCode = $categories[$questions[$qId]->category_id];
-                $rawScores[$categoryCode] += $score;
-            }
-
-            // Kalkulasi Skor Akhir
-            $finalScores = [
-                'Depression' => $rawScores['D'] * 2,
-                'Anxiety' => $rawScores['A'] * 2,
-                'Stress' => $rawScores['S'] * 2,
-            ];
-            
-            list($categories) = $this->interpretScores($finalScores);
-            
-            // Simpan Hasil Akhir
-            Result::create([
+    DB::beginTransaction();
+    try {
+        foreach ($responses as $qId => $score) {
+            // Simpan ke tabel Responses
+            Response::create([
                 'participant_id' => $participantId,
-                'score_depression' => $finalScores['Depression'],
-                'score_anxiety' => $finalScores['Anxiety'],
-                'score_stress' => $finalScores['Stress'],
-                'category_depression' => $categories['Depression'],
-                'category_anxiety' => $categories['Anxiety'],
-                'category_stress' => $categories['Stress'],
+                'question_id' => $qId,
+                'score' => $score,
             ]);
 
-            DB::commit();
-        } catch (\Exception $e) {
-            DB::rollBack();
-            // Hapus data peserta jika transaksi gagal total (opsional)
-            Participant::destroy($participantId);
-            return redirect()->route('landing')->with('error', 'Terjadi kesalahan sistem saat menyimpan hasil.');
+            // Akumulasi Skor
+            $categoryCode = $categories[$questions[$qId]->category_id];
+            $rawScores[$categoryCode] += $score;
         }
 
-        // Hapus session dan redirect ke hasil
-        Session::forget(['current_participant_id', 'dass_responses']);
-        return redirect()->route('dass.results', ['participantId' => $participantId]);
+        // Kalkulasi Skor Akhir
+        $finalScores = [
+            'Depression' => $rawScores['D'] * 2,
+            'Anxiety' => $rawScores['A'] * 2,
+            'Stress' => $rawScores['S'] * 2,
+        ];
+        
+        list($categories) = $this->interpretScores($finalScores);
+        
+        // Simpan Hasil Akhir
+        Result::create([
+            'participant_id' => $participantId,
+            'score_depression' => $finalScores['Depression'],
+            'score_anxiety' => $finalScores['Anxiety'],
+            'score_stress' => $finalScores['Stress'],
+            'category_depression' => $categories['Depression'],
+            'category_anxiety' => $categories['Anxiety'],
+            'category_stress' => $categories['Stress'],
+        ]);
+
+        DB::commit();
+    } catch (\Exception $e) {
+        DB::rollBack();
+        // Hapus data peserta jika transaksi gagal total (opsional)
+        Participant::destroy($participantId);
+        return redirect()->route('landing')->with('error', 'Terjadi kesalahan sistem saat menyimpan hasil.');
     }
+
+    // Hapus session dan redirect ke hasil
+    Session::forget(['current_participant_id', 'dass_responses']);
+    return redirect()->route('dass.results', ['participantId' => $participantId]);
+}
     
     // FUNGSI 6: INTERPRETASI SKOR (Dipertahankan untuk perhitungan kategori teks)
     private function interpretScores(array $scores)
@@ -224,4 +235,23 @@ class DassTestController extends Controller
         
         return view('dass_test.results', compact('participant', 'responses'));
     }
+
+    public function sendResultEmail(Request $request, $participantId)
+{
+    $participant = Participant::with('result')->findOrFail($participantId);
+    
+    // Validasi email participant ada
+    if (!$participant->email) {
+        return back()->with('error', 'Email tidak tersedia. Tidak dapat mengirim hasil.');
+    }
+    
+    try {
+        // Kirim email
+        Mail::to($participant->email)->send(new TestResultMail($participant));
+        
+        return back()->with('success', 'Hasil tes berhasil dikirim ke email ' . $participant->email);
+    } catch (\Exception $e) {
+        return back()->with('error', 'Gagal mengirim email. Silakan coba lagi. Error: ' . $e->getMessage());
+    }
+}
 }

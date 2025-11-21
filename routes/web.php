@@ -23,12 +23,12 @@ Route::get('/test/finish', [DassTestController::class, 'finishTest'])->name('das
 
 // 4. Halaman Hasil
 Route::get('/results/{participantId}', [DassTestController::class, 'showResults'])->name('dass.results');
+Route::post('/results/{participantId}/send-email', [DassTestController::class, 'sendResultEmail'])->name('dass.results.send.email');
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController; 
 
 Route::middleware('guest')->group(function () {
-    // Rute ini harus diberi nama 'login' agar middleware 'auth' dapat menemukannya
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
 });
@@ -37,7 +37,6 @@ Route::middleware('auth')->group(function () {
     // Rute logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 });
-// ------------------------------------------------------------------
 
 
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {

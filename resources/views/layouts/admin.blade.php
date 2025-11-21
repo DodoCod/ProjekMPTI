@@ -29,19 +29,19 @@
 
             {{-- Navigation --}}
             <nav class="mt-8 px-4 space-y-2">
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-5 py-4 rounded-xl transition-all duration-200 @if(request()->routeIs('admin.dashboard')) bg-gradient-to-r from-indigo-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/30 @else text-gray-700 hover:bg-gray-100 hover:translate-x-1 @endif">
+                <a href="{{ route('admin.dashboard') }}" class="flex items-center px-5 py-4 rounded-xl transition-all duration-200 @if(request()->routeIs('admin.dashboard')) bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 @else text-gray-700 hover:bg-gray-100 hover:translate-x-1 @endif">
                     <svg class="w-5 h-5 mr-4" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
                     </svg>
                     <span class="font-semibold">Dashboard</span>
                 </a>
-                <a href="{{ route('admin.questions.index') }}" class="flex items-center px-5 py-4 rounded-xl transition-all duration-200 @if(request()->routeIs('admin.questions.*')) bg-gradient-to-r from-indigo-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/30 @else text-gray-700 hover:bg-gray-100 hover:translate-x-1 @endif">
+                <a href="{{ route('admin.questions.index') }}" class="flex items-center px-5 py-4 rounded-xl transition-all duration-200 @if(request()->routeIs('admin.questions.*')) bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 @else text-gray-700 hover:bg-gray-100 hover:translate-x-1 @endif">
                     <svg class="w-5 h-5 mr-4" fill="currentColor" viewBox="0 0 20 20">
                         <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4zm2 6a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7z" clip-rule="evenodd"/>
                     </svg>
                     <span class="font-semibold">Soal</span>
                 </a>
-                <a href="{{ route('admin.responses.index') }}" class="flex items-center px-5 py-4 rounded-xl transition-all duration-200 @if(request()->routeIs('admin.responses.*')) bg-gradient-to-r from-indigo-500 to-indigo-600 text-white shadow-lg shadow-indigo-500/30 @else text-gray-700 hover:bg-gray-100 hover:translate-x-1 @endif">
+                <a href="{{ route('admin.responses.index') }}" class="flex items-center px-5 py-4 rounded-xl transition-all duration-200 @if(request()->routeIs('admin.responses.*')) bg-indigo-600 text-white shadow-lg shadow-indigo-500/30 @else text-gray-700 hover:bg-gray-100 hover:translate-x-1 @endif">
                     <svg class="w-5 h-5 mr-4" fill="currentColor" viewBox="0 0 20 20">
                         <path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/>
                     </svg>

@@ -16,7 +16,7 @@
                     @foreach(['Beranda', 'Tentang', 'Fitur'] as $item)
                         <button 
                             onclick="scrollToSection('{{ strtolower($item) }}')"
-                            class="text-gray-700 hover:text-indigo-600 transition font-medium relative group"
+                            class="text-gray-700 hover:text-indigo-600 transition font-medium relative group cursor-pointer"
                         >
                             {{ $item }}
                             <span class="absolute bottom-0 left-0 w-0 h-0.5 bg-indigo-600 group-hover:w-full transition-all duration-300"></span>
@@ -24,7 +24,7 @@
                     @endforeach
                     <button 
                         onclick="scrollToSection('penilaian')"
-                        class="bg-indigo-600 text-white px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition font-medium shadow-md hover:shadow-lg transform hover:scale-105"
+                        class="bg-indigo-600 text-white px-6 py-2.5 rounded-lg hover:bg-indigo-700 transition font-medium shadow-md hover:shadow-lg transform hover:scale-105 cursor-pointer"
                     >
                         Mulai Tes
                     </button>
@@ -73,15 +73,15 @@
                     <div class="flex flex-col sm:flex-row gap-4 animate-fadeInUp" style="animation-delay: 0.4s;">
                         <button 
                             onclick="scrollToSection('penilaian')"
-                            class="group bg-indigo-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30"
+                            class="group bg-indigo-600 text-white px-8 py-4 rounded-lg font-semibold hover:bg-indigo-700 transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/30 cursor-pointer"
                         >
-                            Mulai Penilaian
+                            Mulai Tes
                             <i data-lucide="arrow-right" class="w-5 h-5 group-hover:translate-x-1 transition-transform"></i>
                         </button>
                         
                         <button 
                             onclick="scrollToSection('tentang')"
-                            class="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg font-semibold hover:border-indigo-600 hover:text-indigo-600 transition"
+                            class="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-lg font-semibold hover:bg-gray-100 hover:border-indigo-600 hover:text-indigo-600 transition cursor-pointer"
                         >
                             Pelajari Lebih Lanjut
                         </button>
@@ -92,7 +92,7 @@
                             $stats = [
                                 ["number" => "42", "label" => "Pertanyaan Tervalidasi"],
                                 ["number" => "3", "label" => "Dimensi Emosional"],
-                                ["number" => "10 menit", "label" => "Rata-rata Pengerjaan"],
+                                ["number" => "10 menit", "label" => "Waktu Pengerjaan"],
                                 ["number" => "100%", "label" => "Akses Gratis"]
                             ];
                         @endphp
@@ -283,7 +283,7 @@
                 href="{{ url('/dass42-test') }}" {{-- Tautan ke halaman pengisian data diri/tes --}}
                 class="group bg-white text-indigo-600 px-10 py-5 rounded-xl font-bold text-lg hover:bg-gray-50 transition shadow-xl inline-flex items-center gap-3"
             >
-                Mulai Penilaian DASS-42
+                Mulai Cek Kesehatan Mental
                 <i data-lucide="chevron-right" class="w-6 h-6 group-hover:translate-x-1 transition-transform"></i>
             </a>
             
@@ -315,7 +315,7 @@
                         @foreach(['Beranda', 'Tentang', 'Fitur', 'Penilaian'] as $item)
                             <button 
                                 onclick="scrollToSection('{{ strtolower($item) }}')"
-                                class="block text-gray-400 hover:text-white transition"
+                                class="block text-gray-400 hover:text-white transition cursor-pointer"
                             >
                                 {{ $item }}
                             </button>

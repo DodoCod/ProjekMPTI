@@ -28,7 +28,7 @@
                     </div>
                     <div>
                         <h1 class="text-2xl font-extrabold text-white">Edit Pernyataan</h1>
-                        <p class="text-blue-100 text-sm mt-1">Perbarui pertanyaan DASS-42 yang sudah ada</p>
+                        <p class="text-blue-100 text-sm mt-1">Perbarui pertanyaan yang sudah ada</p>
                     </div>
                 </div>
             </div>
@@ -73,6 +73,7 @@
                                 placeholder="Contoh: 1"
                                 class="block w-full px-4 py-3 border border-gray-300 rounded-xl shadow-sm placeholder:text-gray-400 focus:outline-none focus:ring focus:ring-blue-200 focus:border-blue-500 transition-all duration-200 hover:border-blue-300"
                                 min="1"
+                                disabled
                             >
                         </div>
                         @error('question_number')

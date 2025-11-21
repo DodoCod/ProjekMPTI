@@ -3,7 +3,7 @@
 @section('content')
 <div class="mb-8">
     <h1 class="text-3xl font-bold text-gray-900 mb-2">Dashboard Tes Kesehatan Mental</h1>
-    <p class="text-gray-600">Halaman ini menunjukkan jumlah pernyataan, responden, dan grafik rata-rata kondisi responden.</p>
+    <p class="text-gray-600">Data jumlah pernyataan, responden, dan grafik rata-rata kondisi responden.</p>
 </div>
 
     {{-- Statistics Cards --}}

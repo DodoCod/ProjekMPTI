@@ -15,9 +15,9 @@ class AdminUserSeeder extends Seeder
     {
         // Kredensial Admin Default
         User::create([
-            'name' => 'Administrator',
-            'email' => 'admin@dass42.test', // Email yang akan digunakan untuk login
-            'password' => Hash::make('password'), // Password default: 'password'
+            'name' => 'Fernando',
+            'email' => 'fernando@dass42.test', 
+            'password' => Hash::make('projekmpti'),
         ]);
     }
 }

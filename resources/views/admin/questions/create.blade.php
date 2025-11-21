@@ -28,7 +28,7 @@
                     </div>
                     <div>
                         <h1 class="text-2xl font-extrabold text-white">Tambah Pernyataan Baru</h1>
-                        <p class="text-blue-100 text-sm mt-1">Lengkapi form untuk menambahkan pertanyaan DASS-42</p>
+                        <p class="text-blue-100 text-sm mt-1">Lengkapi form untuk menambahkan pertanyaan</p>
                     </div>
                 </div>
             </div>
@@ -225,7 +225,7 @@
                     
                     <button 
                         type="submit" 
-                        class="inline-flex items-center px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl shadow-lg hover:bg-indigo-900 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200">
+                        class="inline-flex items-center px-6 py-2.5 bg-indigo-600 text-white font-semibold rounded-xl shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200 hover:bg-indigo-700 hover:shadow-lg hover:border-indigo-900">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                         </svg>
