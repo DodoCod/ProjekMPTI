@@ -412,7 +412,7 @@
                 </p>
             </div>
 
-            <form action="{{ route('dass.results.send.email', $participant->id) }}" method="POST" id="actualEmailForm">
+            <form action="{{ route('dass.results.send.email', $participant->unique_code) }}" method="POST" id="actualEmailForm">
                 @csrf
                 <button 
                     type="submit"
