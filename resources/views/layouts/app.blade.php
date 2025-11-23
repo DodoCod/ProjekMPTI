@@ -5,19 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PsyCheck - Kenali Kesehatan Mental Anda</title>
     
-    {{-- Vite Asset Loading: Ini harus menjadi satu-satunya sumber styling & script --}}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    
-    {{-- CDN Tailwind dihilangkan --}}
-    
+        
     {{-- Link Font Utama --}}
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-    <style>
-        /* CSS Animasi disarankan dipindah ke resources/css/app.css */
-        
+    <style>        
         * {
-            /* Mengganti font-family di CSS biasa */
             font-family: 'Plus Jakarta Sans', sans-serif;
         }
         

@@ -24,7 +24,7 @@
                             ⏰ Perhatian: Batas Waktu Pengerjaan
                         </h3>
                         <p class="text-sm text-amber-800 leading-relaxed">
-                            Setelah Anda memulai tes, <span class="font-bold">Anda memiliki waktu 10 menit</span> untuk menyelesaikan seluruh pertanyaan DASS-42. 
+                            Setelah Anda memulai tes, <span class="font-bold">Anda memiliki waktu 10 menit</span> untuk menyelesaikan seluruh pertanyaan ini. 
                             Timer akan dimulai otomatis saat Anda masuk ke halaman pertanyaan.
                         </p>
                     </div>
@@ -193,7 +193,7 @@
             </div>
         </div>
 
-        <div class="flex gap-3">
+        <div class="flex flex-col md:flex-row gap-3">
             <button 
                 type="button"
                 onclick="closeConfirmationModal()"

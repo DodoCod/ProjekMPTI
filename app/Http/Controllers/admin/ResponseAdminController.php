@@ -10,9 +10,7 @@ use Illuminate\Support\Facades\DB;
 
 class ResponseAdminController extends Controller
 {
-    /**
-     * Menampilkan daftar semua hasil tes (Data Respon).
-     */
+    // Menampilkan daftar seua hasil tes 
     public function index()
     {
         // Mengambil data peserta dengan hasil skor, diurutkan berdasarkan tanggal tes terbaru
@@ -23,9 +21,7 @@ class ResponseAdminController extends Controller
         return view('admin.responses.index', compact('participants'));
     }
 
-    /**
-     * Menampilkan detail hasil tes dari satu peserta (termasuk grafik dan jawaban).
-     */
+    // Menampilkan detail hasil tes dari satu peserta
     public function show(Participant $participant)
     {
         // Memastikan relasi hasil dan jawaban dimuat
@@ -37,13 +33,10 @@ class ResponseAdminController extends Controller
         return view('admin.responses.show', compact('participant', 'responsesDetail'));
     }
 
-    /**
-     * Menghapus (DELETE) data peserta dan semua hasil/respons terkait.
-     */
+    // Menghapus data peserta dan semua hasil/respon terkait
     public function destroy(Participant $participant)
     {
-        // Karena kita menggunakan onDelete('cascade') di migrasi, 
-        // menghapus peserta akan otomatis menghapus responses dan results terkait.
+        // Data responses dan results terkait akan terhapus otomatis kalau data peserta dihapus karna menggunakan onDelete('cascade')
         $participant->delete(); 
 
         return redirect()->route('admin.responses.index')

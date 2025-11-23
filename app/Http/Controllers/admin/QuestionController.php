@@ -9,27 +9,21 @@ use App\Models\Category;
 
 class QuestionController extends Controller
 {
-    /**
-     * Menampilkan daftar semua pertanyaan (Soal) dengan paginasi.
-     */
+    // Menampilkan daftar semua pertanyaan dengan paginasi
     public function index()
     {
         $questions = Question::with('category')->orderBy('question_number', 'asc')->paginate(10);
         return view('admin.questions.index', compact('questions'));
     }
 
-    /**
-     * Menampilkan formulir untuk membuat pertanyaan baru.
-     */
+    // Menampilkan formulir untuk membuat pertanyaan baru
     public function create()
     {
         $categories = Category::all();
         return view('admin.questions.create', compact('categories'));
     }
 
-    /**
-     * Menyimpan pertanyaan baru ke database.
-     */
+    // Menyimpan pertanyaan baru ke database
     public function store(Request $request)
     {
         $request->validate([
@@ -44,18 +38,14 @@ class QuestionController extends Controller
                          ->with('success', 'Pertanyaan berhasil ditambahkan!');
     }
 
-    /**
-     * Menampilkan formulir edit pertanyaan.
-     */
+    // Menampilkan formulir edit pertanyaan
     public function edit(Question $question)
     {
         $categories = Category::all();
         return view('admin.questions.edit', compact('question', 'categories'));
     }
     
-    /**
-     * Memperbarui pertanyaan di database.
-     */
+    // Memperbarui pertanyaan di database
     public function update(Request $request, Question $question)
     {
         // Pengecekan unik pada question_number diabaikan jika ID-nya sama
@@ -71,9 +61,7 @@ class QuestionController extends Controller
                          ->with('success', 'Pertanyaan berhasil diperbarui!');
     }
 
-    /**
-     * Menghapus pertanyaan dari database.
-     */
+    // Menghapus pertanyaan dari database
     public function destroy(Question $question)
     {
         $question->delete();

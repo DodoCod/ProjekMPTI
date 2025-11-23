@@ -32,7 +32,6 @@
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $participant->email ?? '-' }}</td>
                         <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-700">{{ $participant->date_of_test->format('Y-m-d H:i') }}</td>
                         
-                        {{-- Skor Akhir --}}
                         @if ($participant->result)
                             <td class="px-4 py-4 whitespace-nowrap text-center text-sm font-bold text-indigo-700">{{ $participant->result->score_depression }}</td>
                             <td class="px-4 py-4 whitespace-nowrap text-center text-sm font-bold text-blue-700">{{ $participant->result->score_anxiety }}</td>
@@ -43,24 +42,22 @@
 
                         <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                             <div class="flex items-center justify-end space-x-2">                                
-                                <a href="{{ route('admin.responses.show', $participant->id) }}" 
+                                <a href="{{ route('admin.responses.show', $participant->unique_code) }}" 
                                    title="Lihat Detail"
                                    class="inline-flex items-center justify-center w-8 h-8 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg transition">
                                     <i data-lucide="eye" class="w-4 h-4"></i>
                                 </a>
 
-                                {{-- Delete --}}
                                 <button 
                                     type="button"
-                                    onclick="showDeleteModal({{ $participant->id }}, '{{ addslashes($participant->name) }}')"
+                                    onclick="showDeleteModal('{{ $participant->unique_code }}', '{{ addslashes($participant->name) }}')"
                                     title="Hapus"
                                     class="inline-flex items-center justify-center w-8 h-8 bg-red-50 hover:bg-red-100 text-red-600 rounded-lg transition">
                                     <i data-lucide="trash-2" class="w-4 h-4"></i>
                                 </button>
 
-                                {{-- Hidden Form for Delete --}}
-                                <form id="delete-form-{{ $participant->id }}"
-                                      action="{{ route('admin.responses.destroy', $participant->id) }}"
+                                <form id="delete-form-{{ $participant->unique_code }}"
+                                      action="{{ route('admin.responses.destroy', $participant->unique_code) }}"
                                       method="POST"
                                       class="hidden">
                                     @csrf
@@ -75,12 +72,9 @@
     @endif
 </div>
 
-{{-- Custom Pagination --}}
 @if ($participants->hasPages())
 <div class="mt-6 w-full">
     <div class="flex items-center justify-between">
-
-        {{-- Informasi posisi data --}}
         @php
             $currentPage = $participants->currentPage();
             $perPage = $participants->perPage();
@@ -95,10 +89,7 @@
             <span class="font-semibold">{{ $total }}</span> data
         </p>
 
-        {{-- Pagination Buttons --}}
         <nav class="flex items-center space-x-2">
-
-            {{-- Previous --}}
             @if ($participants->onFirstPage())
                 <span class="px-3 py-2 text-gray-400 bg-gray-100 rounded-lg cursor-not-allowed">
                     <i data-lucide="chevron-left" class="w-4 h-4"></i>
@@ -110,7 +101,6 @@
                 </a>
             @endif
 
-            {{-- Page numbers --}}
             @foreach ($participants->getUrlRange(1, $participants->lastPage()) as $page => $url)
                 @if ($page == $participants->currentPage())
                     <span class="px-4 py-2 text-white bg-gradient-to-r from-indigo-500 to-indigo-600 rounded-lg font-semibold shadow">
@@ -124,7 +114,6 @@
                 @endif
             @endforeach
 
-            {{-- Next --}}
             @if ($participants->hasMorePages())
                 <a href="{{ $participants->nextPageUrl() }}"
                     class="px-3 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50 transition">
@@ -135,7 +124,6 @@
                     <i data-lucide="chevron-right" class="w-4 h-4"></i>
                 </span>
             @endif
-
         </nav>
     </div>
 </div>
@@ -145,23 +133,19 @@
 <div id="deleteModal" class="hidden fixed inset-0 bg-black/30 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
     <div id="deleteModalContent" class="bg-white rounded-2xl shadow-2xl max-w-md w-full p-8 transform transition-all duration-300 scale-95">
         <div class="text-center">
-            <!-- Icon Warning -->
             <div class="mx-auto flex items-center justify-center h-16 w-16 rounded-full bg-orange-100 mb-4">
                 <i data-lucide="alert-triangle" class="w-10 h-10 text-orange-600"></i>
             </div>
             
-            <!-- Title -->
             <h3 class="text-2xl font-bold text-gray-900 mb-2">Hapus Participant?</h3>
             
-            <!-- Description -->
             <p class="text-gray-600 m-8">
                 Apakah Anda yakin ingin menghapus respon dari 
-                <span class="text-sm italic text-gray-500 mb-8" id="questionPreview">
+                <span class="text-sm italic text-gray-500 mb-8" id="participantPreview">
                     Nama Peserta
                 </span> ?
             </p>
 
-            <!-- Warning Box -->
             <div class="bg-orange-50 border-l-4 border-orange-400 p-4 mb-6 text-left rounded-lg">
                 <div class="flex items-start">
                     <i data-lucide="info" class="w-5 h-5 text-orange-600 mt-0.5 mr-3 flex-shrink-0"></i>
@@ -175,7 +159,6 @@
                 </div>
             </div>
 
-            <!-- Action Buttons -->
             <div class="flex gap-3">
                 <button 
                     type="button"
@@ -199,21 +182,19 @@
 </div>
 
 <script>
-    let deleteQuestionId = null;
+    let deleteParticipantCode = null;
 
     document.addEventListener('DOMContentLoaded', function() {
         lucide.createIcons();
     });
 
-    function showDeleteModal(questionId, questionText) {
-        deleteQuestionId = questionId;
+    function showDeleteModal(uniqueCode, participantName) {
+        deleteParticipantCode = uniqueCode;
         
-        // Update question preview
-        const preview = document.getElementById('questionPreview');
-        const truncated = questionText.length > 100 ? questionText.substring(0, 100) + '...' : questionText;
-        preview.textContent = `${truncated}`;
+        const preview = document.getElementById('participantPreview');
+        const truncated = participantName.length > 100 ? participantName.substring(0, 100) + '...' : participantName;
+        preview.textContent = truncated;
         
-        // Show modal with animation
         const modal = document.getElementById('deleteModal');
         const modalContent = document.getElementById('deleteModalContent');
         
@@ -239,30 +220,26 @@
         
         setTimeout(() => {
             modal.classList.add('hidden');
-            deleteQuestionId = null;
+            deleteParticipantCode = null;
         }, 300);
     }
 
     function confirmDelete() {
-        if (deleteQuestionId) {
-            // Show loading state
+        if (deleteParticipantCode) {
             const btn = document.getElementById('confirmDeleteBtn');
             btn.disabled = true;
             btn.innerHTML = '<svg class="animate-spin h-5 w-5 mr-2 inline" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Menghapus...';
             
-            // Submit the form
-            document.getElementById('delete-form-' + deleteQuestionId).submit();
+            document.getElementById('delete-form-' + deleteParticipantCode).submit();
         }
     }
 
-    // Close modal when clicking outside
     document.getElementById('deleteModal')?.addEventListener('click', function(e) {
         if (e.target === this) {
             closeDeleteModal();
         }
     });
 
-    // Close modal with ESC key
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && !document.getElementById('deleteModal').classList.contains('hidden')) {
             closeDeleteModal();

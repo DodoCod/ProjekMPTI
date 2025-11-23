@@ -12,16 +12,16 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // Total counts
+        // Total Jumlah Responden dan
         $totalParticipants = Participant::count();
         $totalQuestions = Question::count();
         
-        // Calculate average scores for chart
+        // Perhitungan Rata-rata skor untuk Grafik
         $averageDepression = Result::avg('score_depression') ?? 0;
         $averageAnxiety = Result::avg('score_anxiety') ?? 0;
         $averageStress = Result::avg('score_stress') ?? 0;
         
-        // Round to 2 decimal places
+        // Perhitungan kedua untuk Desimal
         $averageDepression = round($averageDepression, 2);
         $averageAnxiety = round($averageAnxiety, 2);
         $averageStress = round($averageStress, 2);

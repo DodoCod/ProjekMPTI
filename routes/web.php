@@ -1,9 +1,9 @@
 <?php
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DassTestController;
-use App\Http\Controllers\Admin\QuestionController;
-use App\Http\Controllers\Admin\DashboardController; // Untuk Admin nanti
-use App\Http\Controllers\Admin\ResponseAdminController; // Untuk Admin nanti
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController; 
+use App\Http\Controllers\Auth\RegisterController;
 
 // 1. Landing Page
 Route::get('/', function () {
@@ -22,15 +22,20 @@ Route::post('/test/submit/step', [DassTestController::class, 'submitStep'])->nam
 Route::get('/test/finish', [DassTestController::class, 'finishTest'])->name('dass.test.finish');
 
 // 4. Halaman Hasil
-Route::get('/results/{participantId}', [DassTestController::class, 'showResults'])->name('dass.results');
-Route::post('/results/{participantId}/send-email', [DassTestController::class, 'sendResultEmail'])->name('dass.results.send.email');
+Route::get('/results/{participant:unique_code}', [DassTestController::class, 'showResults'])->name('dass.results');
+Route::post('/results/{participant:unique_code}/send-email', [DassTestController::class, 'sendResultEmail'])->name('dass.results.send.email');
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\LogoutController; 
+use App\Http\Controllers\Admin\QuestionController;
+use App\Http\Controllers\Admin\DashboardController; // Untuk Admin nanti
+use App\Http\Controllers\Admin\ResponseAdminController; // Untuk Admin nanti
 
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');
     Route::post('/login', [LoginController::class, 'login']);
+
+    // Route register
+    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register']);
 });
 
 Route::middleware('auth')->group(function () {

@@ -46,13 +46,14 @@
 
             <div class="mb-6">
                 <p class="text-sm font-medium text-gray-700 mb-2 text-center">
-                    Pertanyaan {{ $step }} dari {{ $totalQuestions }}
+                    Pertanyaan {{ $step }}
                 </p>
                 <div class="w-full bg-gray-200 rounded-full h-2">
                     <div 
                         class="bg-indigo-600 h-2 rounded-full transition-all duration-700 ease-out shadow-inner" 
                         style="width: {{ ($step / $totalQuestions) * 100 }}%"
-                    ></div>
+                    >
+                    </div>
                 </div>
             </div>
 
@@ -60,8 +61,8 @@
                 @csrf
                 <input type="hidden" name="question_id" value="{{ $currentQuestion->id }}">
                 <input type="hidden" name="step" value="{{ $step }}">
+                <input type="hidden" name="score" id="scoreInput" value="">
                 <input type="hidden" name="time_expired" id="timeExpiredInput" value="0">
-                <input type="hidden" name="participant_id" value="{{ $participantId }}">
 
                 <div class="bg-gray-50 p-6 md:p-7 rounded-xl shadow-inner border border-gray-100">  
                     <h2 class="text-xl md:text-2xl font-bold text-gray-900 mb-6 leading-snug">
@@ -90,11 +91,12 @@
                                           has-checked:bg-indigo-100 has-checked:border-indigo-100 has-checked:ring-2 has-checked:ring-indigo-300">
                                 <input 
                                     type="radio" 
-                                    name="score" 
+                                    name="answer" 
                                     value="{{ $score }}" 
                                     required
                                     @if($savedAnswer !== null && $savedAnswer == $score) checked @endif
                                     class="h-6 w-6 text-indigo-600 border-2 border-gray-400 focus:ring-indigo-500 transition duration-150"
+                                    onclick="handleAnswerSelect({{ $score }})"
                                 >
                                 <span class="text-gray-900 font-medium text-base">{{ $text }}</span>
                             </label>
@@ -107,12 +109,12 @@
 
                 <div class="flex justify-end pt-3">                   
                     @if ($step < $totalQuestions)
-                        <button type="submit" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 transition duration-150 shadow-md flex items-center cursor-pointer">
+                        <button type="button" onclick="submitForm()" class="bg-indigo-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-indigo-700 transition duration-150 shadow-md flex items-center md:justify-center cursor-pointer">
                             Selanjutnya
                             <i data-lucide="chevron-right" class="w-6 h-6 ml-1"></i>
                         </button>
                     @else
-                        <button type="submit" class="bg-teal-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-teal-700 transition duration-150 shadow-md flex items-center cursor-pointer">
+                        <button type="button" onclick="submitForm()" class="bg-teal-600 text-white px-8 py-3 rounded-lg font-bold hover:bg-teal-700 transition duration-150 shadow-md flex items-center md:justify-center cursor-pointer">
                             Selesai & Lihat Hasil
                             <i data-lucide="check" class="w-6 h-6 ml-1"></i>
                         </button>
@@ -145,66 +147,54 @@
 </div>
 
 <script>
-    // Timer Configuration - SESUAIKAN DURASI DI SINI (dalam detik)
-    const TOTAL_TIME = 10 * 60; // 10 menit = 600 detik
-    const WARNING_TIME = 1 * 60; // 1 menit = 60 detik
+    const TOTAL_TIME = 5 * 60;
+    const WARNING_TIME = 1 * 60;
     
     let timeRemaining = TOTAL_TIME;
     let timerInterval;
     let warningShown = false;
     let timerStartTime = null;
 
-    // Initialize timer when page loads
     document.addEventListener('DOMContentLoaded', function() {
-        // Check if timer has already started (from sessionStorage)
         const savedStartTime = sessionStorage.getItem('dassTestStartTime');
         
         if (savedStartTime) {
-            // Timer sudah pernah dimulai, hitung sisa waktu
             timerStartTime = parseInt(savedStartTime);
             const elapsedTime = Math.floor((Date.now() - timerStartTime) / 1000);
             timeRemaining = TOTAL_TIME - elapsedTime;
             
-            // Jika waktu sudah habis
             if (timeRemaining <= 0) {
                 timeRemaining = 0;
                 showTimeUpModal();
                 return;
             }
             
-            // Check if warning should already be shown
             if (timeRemaining <= WARNING_TIME) {
                 warningShown = true;
                 showWarning();
             }
         } else {
-            // Timer baru dimulai untuk pertama kali
             timerStartTime = Date.now();
             sessionStorage.setItem('dassTestStartTime', timerStartTime);
             timeRemaining = TOTAL_TIME;
         }
         
         startTimer();
-        lucide.createIcons(); // Initialize Lucide icons
+        lucide.createIcons();
     });
 
     function startTimer() {
-        // Update display immediately
         updateTimerDisplay();
         
         timerInterval = setInterval(function() {
             timeRemaining--;
-            
-            // Update display
             updateTimerDisplay();
             
-            // Check for warning (1 minute remaining)
             if (timeRemaining <= WARNING_TIME && !warningShown) {
                 showWarning();
                 warningShown = true;
             }
             
-            // Check if time's up
             if (timeRemaining <= 0) {
                 clearInterval(timerInterval);
                 showTimeUpModal();
@@ -219,7 +209,6 @@
         
         document.getElementById('timerDisplay').textContent = display;
         
-        // Change color when time is running out
         const timerContainer = document.getElementById('timerContainer');
         const timerDisplay = document.getElementById('timerDisplay');
         
@@ -233,73 +222,62 @@
 
     function showWarning() {
         const warningBanner = document.getElementById('warningBanner');
-        // Remove hidden first, then trigger animation
         warningBanner.classList.remove('hidden');
         
-        // Use setTimeout to ensure hidden is removed before animation starts
         setTimeout(() => {
             warningBanner.classList.remove('opacity-0', 'translate-y-[-10px]');
             warningBanner.classList.add('opacity-100', 'translate-y-0');
         }, 10);
         
-        // Refresh lucide icons for the warning banner
         lucide.createIcons();
-        
-        // Play notification sound (optional)
-        // const audio = new Audio('/path/to/notification.mp3');
-        // audio.play();
-        
-        // Browser notification (optional, requires permission)
-        if ("Notification" in window && Notification.permission === "granted") {
-            new Notification("PsyCheck - Waktu Hampir Habis", {
-                body: "Sisa waktu pengerjaan tes kurang dari 1 menit!",
-                icon: "/path/to/icon.png"
-            });
-        }
     }
 
     function showTimeUpModal() {
         document.getElementById('timeUpModal').classList.remove('hidden');
         document.getElementById('timeExpiredInput').value = '1';
-        lucide.createIcons(); // Refresh icons in modal
+        lucide.createIcons();
     }
 
-    function submitFormAutomatic() {
-        // Set flag that time has expired
-        document.getElementById('timeExpiredInput').value = '1';
+    function handleAnswerSelect(score) {
+        document.getElementById('scoreInput').value = score;
+    }
+
+    // ✅ PERBAIKAN: Jangan hapus timer saat submit biasa
+    function submitForm() {
+        const score = document.getElementById('scoreInput').value;
         
-        // Auto-select first option if nothing selected
-        const scoreInputs = document.querySelectorAll('input[name="score"]');
-        let isSelected = false;
-        
-        scoreInputs.forEach(input => {
-            if (input.checked) isSelected = true;
-        });
-        
-        if (!isSelected && scoreInputs.length > 0) {
-            scoreInputs[0].checked = true;
+        if (score === '') {
+            alert('Mohon pilih salah satu jawaban sebelum melanjutkan.');
+            return;
         }
         
-        // Clear session storage
-        sessionStorage.removeItem('dassTestStartTime');
+        // HAPUS BARIS INI: sessionStorage.removeItem('dassTestStartTime');
+        // Timer TIDAK di-reset saat pindah soal
         
-        // Submit form normally - let the backend handle redirect to result
         document.getElementById('testForm').submit();
     }
 
-    // Clear timer when leaving page
+    // ✅ PERBAIKAN: Hanya hapus timer saat waktu habis atau tes selesai
+    function submitFormAutomatic() {
+        document.getElementById('timeExpiredInput').value = '1';
+        
+        const scoreInput = document.getElementById('scoreInput');
+        if (scoreInput.value === '') {
+            scoreInput.value = '0';
+        }
+        
+        // Hapus timer karena tes selesai (waktu habis)
+        sessionStorage.removeItem('dassTestStartTime');
+        
+        document.getElementById('testForm').submit();
+    }
+
     window.addEventListener('beforeunload', function() {
         clearInterval(timerInterval);
     });
 
-    // Request notification permission on page load
     if ("Notification" in window && Notification.permission === "default") {
         Notification.requestPermission();
-    }
-    
-    // Clear session when test is complete (call this from your result page)
-    function clearTestTimer() {
-        sessionStorage.removeItem('dassTestStartTime');
     }
 </script>
 

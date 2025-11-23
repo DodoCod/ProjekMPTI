@@ -13,11 +13,13 @@ return new class extends Migration
     {
         Schema::create('participants', function (Blueprint $table) {
             $table->id();
+            $table->string('unique_code', 36)->unique();
+            $table->index('unique_code');
             $table->string('name'); // Nama Lengkap
             $table->string('email')->nullable(); // Email
             $table->unsignedSmallInteger('age')->nullable();
             $table->enum('gender', ['Laki-laki', 'Perempuan', 'Lainnya'])->nullable(); // Jenis Kelamin
-            $table->date('date_of_birth')->nullable(); // Tanggal Lahir (BARU)
+            $table->date('date_of_birth')->nullable(); // Tanggal Lahir
             $table->timestamp('date_of_test')->useCurrent(); // Tanggal Ujian
             $table->timestamps();
         });

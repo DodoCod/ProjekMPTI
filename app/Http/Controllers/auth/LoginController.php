@@ -33,17 +33,22 @@ class LoginController extends Controller
 
         // 2. Coba Autentikasi
         if (Auth::attempt($credentials, $request->boolean('remember'))) {
-            // Regenerate session untuk mencegah session fixation
             $request->session()->regenerate();
 
             // Redirect pengguna ke halaman admin dashboard
             return redirect()->intended(route('admin.dashboard'));
+        } else if ($request['email']) {
+            // 3. Jika email admin tidak terdaftar di database
+            return back()->withErrors([
+                'email' => 'Email belum terdaftar.',
+            ]);
+        } else {
+            // 3. Jika Gagal, kembalikan dengan error
+            return back()->withErrors([
+                'email' => 'Kombinasi email dan password tidak cocok.',
+            ])->onlyInput('email');
         }
 
-        // 3. Jika Gagal, kembalikan dengan error
-        return back()->withErrors([
-            'email' => 'Kombinasi email dan password tidak cocok.',
-        ])->onlyInput('email');
     }
 
     /**
