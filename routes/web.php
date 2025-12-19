@@ -2,7 +2,6 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DassTestController;
 use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\LogoutController; 
 use App\Http\Controllers\Auth\RegisterController;
 
 // 1. Landing Page

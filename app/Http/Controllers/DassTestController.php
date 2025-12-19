@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Log;
 use Carbon\Carbon;
 use App\Models\Result;
 use App\Models\Category;
