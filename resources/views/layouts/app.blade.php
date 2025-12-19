@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PsyCheck - Kenali Kesehatan Mental Anda</title>
-    
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+
+    <script src="https://cdn.tailwindcss.com"></script>
         
     {{-- Link Font Utama --}}
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -29,7 +29,7 @@
         .animate-floatDelay2 { animation: floatDelay2 3.5s ease-in-out infinite; animation-delay: 0.5s; }
     </style>
 </head>
-<body class="min-h-screen bg-white font-sans">
+<body class="min-h-screen bg-white font-sans bg-red-500">
     
     @yield('content')
     
