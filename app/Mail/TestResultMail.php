@@ -6,41 +6,36 @@ use App\Models\Participant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
-use Illuminate\Queue\SerializesModels;
 use Illuminate\Mail\Mailables\Envelope;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Queue\SerializesModels;
 
 class TestResultMail extends Mailable
 {
-    public function sendResultEmail(Request $request, Participant $participant)
+    use Queueable, SerializesModels;
+
+    public $participant;
+
+    public function __construct(Participant $participant)
     {
-        return back()->with('info', 'Fitur email sementara dimatikan di production.');
+        $this->participant = $participant;
     }
-    // use Queueable, SerializesModels;
 
-    // public $participant;
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            subject: 'Hasil Skrining Kesehatan Mental DASS-42 Anda',
+        );
+    }
 
-    // public function __construct(Participant $participant)
-    // {
-    //     $this->participant = $participant;
-    // }
-
-    // public function envelope(): Envelope
-    // {
-    //     return new Envelope(
-    //         subject: 'Hasil Skrining Kesehatan Mental DASS-42 Anda',
-    //     );
-    // }
-
-    // public function content(): Content
-    // {
-    //     return new Content(
-    //         // Merujuk ke resources/views/emails/test-result.blade.php
-    //         markdown: 'emails.test-result', 
-    //         with: [
-    //             'name' => $this->participant->name,
-    //             'result' => $this->participant->result,
-    //         ],
-    //     );
-    // }
+    public function content(): Content
+    {
+        return new Content(
+            // Merujuk ke resources/views/emails/test-result.blade.php
+            markdown: 'emails.test-result', 
+            with: [
+                'name' => $this->participant->name,
+                'result' => $this->participant->result,
+            ],
+        );
+    }
 }
