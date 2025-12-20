@@ -17,7 +17,7 @@ Hasil ini bersifat **skrining** dan bukan merupakan diagnosis klinis.
 
 Jika Anda mendapatkan skor tinggi (Sedang/Berat/Sangat Berat), kami sangat menyarankan Anda untuk mencari bantuan profesional (psikolog/psikiater) untuk evaluasi yang lebih mendalam.
 
-@component('mail::button', ['url' => config('app.url')])
+@component('mail::button', ['url' => config('app.url') . 'results/' . $participant->unique_code])
 Kembali ke PsyCheck
 @endcomponent
 
